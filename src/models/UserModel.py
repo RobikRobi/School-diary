@@ -1,4 +1,5 @@
 import datetime
+import typing
 
 from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped, mapped_column, Mapped, relationship
@@ -7,12 +8,12 @@ from sqlalchemy.sql import func
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, Mapped, relationship
 
-from typing import TYPE_CHECKING
+if typing.TYPE_CHECKING:
+    from src.models.SubjectModel import Subject
+    from src.models.MarkModel import Mark
 
 from src.db import Base
 
-if TYPE_CHECKING:
-    from src.models.MarkModel import Mark
 
 class User(Base):
     __tablename__ = "user_table"
@@ -38,3 +39,10 @@ class User(Base):
 #    role:Mapped[str]
 
     marks:Mapped[list["Mark"]] = relationship(back_populates="student", uselist=True)
+    subjects: Mapped[list["Subject"]] = relationship(secondary="usersubject", back_populates="users", uselist=True)
+
+
+class UserSubject(Base):
+	__tablename__ = "usersubject"
+	user_id:Mapped[int] = mapped_column(ForeignKey('user.id'),primary_key=True)
+	subject_id:Mapped[int] = mapped_column(ForeignKey('subject.id'),primary_key=True)
