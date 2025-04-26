@@ -43,6 +43,7 @@ class User(Base):
 
 
 class UserSubject(Base):
-	__tablename__ = "usersubject"
+	__tablename__ = "user_subject"
+     
 	user_id:Mapped[int] = mapped_column(ForeignKey('user.id'),primary_key=True)
 	subject_id:Mapped[int] = mapped_column(ForeignKey('subject.id'),primary_key=True)
