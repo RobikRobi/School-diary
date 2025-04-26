@@ -2,11 +2,10 @@ import datetime
 import typing
 
 from sqlalchemy import DateTime
-from sqlalchemy.orm import Mapped, mapped_column, Mapped, relationship
-from src.enum.UserEnum import UserRole
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy import ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, Mapped, relationship
+
 
 if typing.TYPE_CHECKING:
     from src.models.SubjectModel import Subject

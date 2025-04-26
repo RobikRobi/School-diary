@@ -1,7 +1,6 @@
-import datetime
 import typing
 
-from sqlalchemy.orm import Mapped, mapped_column, Mapped, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if typing.TYPE_CHECKING:
     from src.models.MarkModel import Lesson
