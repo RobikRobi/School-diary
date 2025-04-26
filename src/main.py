@@ -10,6 +10,7 @@ from .models.UserModel import User
 from .models.SubjectModel import Subject
 from .models.LessonModel import Lesson
 from .models.MarkModel import Mark
+from .models.GroupModel import Group
 
 
 app = FastAPI()

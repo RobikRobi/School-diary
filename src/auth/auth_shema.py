@@ -1,5 +1,6 @@
 import datetime
 from pydantic import BaseModel, EmailStr, field_validator
+from src.enum.UserEnum import UserRole
 
 class LoginUser(BaseModel):
     
@@ -8,14 +9,16 @@ class LoginUser(BaseModel):
     
 class RegisterUser(BaseModel):
         
-    email: EmailStr
-    
     name: str
     surname: str
-    
-    dob:datetime.date
+    patronymic: str
+    snils: int
 
+    login: str
     password: str | bytes 
+    email: EmailStr
+    role: UserRole
+    dob: datetime.date
     
     @field_validator("password")
     def check_password(cls, v):
@@ -28,19 +31,20 @@ class ShowUser(BaseModel):
     id: int
     name: str
     surname: str
-    email: EmailStr
-    
-    
+    patronymic: str
+    snils: int
+    role: UserRole
     dob: datetime.date
+
 
 class ShowUserWithToken(BaseModel):
     
 
-    email: EmailStr
     name: str
     surname: str
-    
-    
+    patronymic: str
+    snils: int
+    role: UserRole
     dob: datetime.date
 
     token: str
@@ -49,7 +53,11 @@ class UpdateUser(BaseModel):
 
     name: str | None
     surname: str | None
-    email: EmailStr | None  
+    patronymic: str | None
+    email: EmailStr | None
+    snils: int | None
+    role: UserRole | None
+
     password: str | bytes | None
     
     @field_validator("password")
