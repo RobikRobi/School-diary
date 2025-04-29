@@ -24,7 +24,7 @@ class Group(Base):
 
     # Связи
     subjects: Mapped[list["Subject"]] = relationship(secondary="groupsubject", back_populates="groups", uselist=True)
-    users: Mapped[list["User"]] = relationship(secondary="groupsubject", back_populates="groups", uselist=True)
+    users: Mapped[list["User"]] = relationship(secondary="usergroup", back_populates="groups", uselist=True)
     lessons: Mapped[list["Lesson"]] = relationship(back_populates="group", uselist=True)
 
 

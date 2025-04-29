@@ -23,6 +23,7 @@ class Lesson(Base):
 
     subject_id: Mapped[int] = mapped_column(ForeignKey("subject_table.id"))
     teacher_id: Mapped[int] = mapped_column(ForeignKey("user_table.id"))
+    group_id: Mapped[int] = mapped_column(ForeignKey("group_table.id"))
 
     date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), default=func.now())
     theme: Mapped[str] = mapped_column(nullable=True, default=None)

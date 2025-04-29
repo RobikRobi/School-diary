@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.db import engine,Base
 from src.auth.auth_router import app as auth_app
+from src.group.group_router import app as group_app
+from src.subject.subject_router import app as subject_app
 
 # from src.admin_panel.admin_router import app as admin_app
 
@@ -17,6 +19,8 @@ app = FastAPI()
 
 # routers
 app.include_router(auth_app)
+app.include_router(group_app)
+app.include_router(subject_app)
 
 # CORS
 

@@ -30,9 +30,9 @@ class User(Base):
     role:Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.STUDENT)
     dob:Mapped[datetime.date]
 
-    # связи 
+    # связи
     marks: Mapped[list["Mark"]] = relationship(back_populates="student", uselist=True)
-    groups: Mapped[list["Group"]] = relationship(secondary="groupsubject", back_populates="users", uselist=True)
+    groups: Mapped[list["Group"]] = relationship(secondary="usergroup", back_populates="users", uselist=True)
     lessons_taught: Mapped[list["Lesson"]] = relationship(back_populates="teacher", foreign_keys="Lesson.teacher_id")
 
     createdAt: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -42,4 +42,4 @@ class UsersGroups(Base):
     __tablename__ = "usergroup"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("user_table.id"),primary_key=True)
-    group_id:Mapped[int] = mapped_column(ForeignKey("subject_table.id"),primary_key=True)
+    group_id:Mapped[int] = mapped_column(ForeignKey("group_table.id"),primary_key=True)
