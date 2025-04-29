@@ -33,10 +33,8 @@ class ShowUser(BaseModel):
     snils: int
     dob: datetime.date
 
-
 class ShowUserWithToken(BaseModel):
     
-
     name: str
     surname: str
     patronymic: str
