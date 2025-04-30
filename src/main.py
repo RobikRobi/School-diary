@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.db import engine,Base
 from src.auth.auth_router import app as auth_app
-from src.client.subject_router import subject_router
 
 # from src.admin_panel.admin_router import app as admin_app
 
@@ -11,13 +10,13 @@ from .models.UserModel import User
 from .models.SubjectModel import Subject
 from .models.LessonModel import Lesson
 from .models.MarkModel import Mark
+from .models.GroupModel import Group
 
 
 app = FastAPI()
 
 # routers
 app.include_router(auth_app)
-app.include_router(subject_router)
 
 # CORS
 

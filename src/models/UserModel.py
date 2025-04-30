@@ -8,6 +8,7 @@ from sqlalchemy import ForeignKey
 
 if typing.TYPE_CHECKING:
     from src.models.MarkModel import Mark
+    from src.models.GroupModel import Group
     from src.models.LessonModel import Lesson
     from src.models.SubjectModel import Subject
 
@@ -19,8 +20,6 @@ class User(Base):
 
     id:Mapped[int] = mapped_column(primary_key=True)
 
-    lesson_id: Mapped[int] = mapped_column(ForeignKey('lesson_table.id'))
-
     name:Mapped[str]
     surname:Mapped[str]
     patronymic:Mapped[str]
@@ -29,11 +28,10 @@ class User(Base):
     login:Mapped[str] = mapped_column(unique=True)
     password:Mapped[bytes]
     email:Mapped[str] = mapped_column(unique=True)
-    user_role:Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.STUDENT)
+    role:Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.STUDENT)
     dob:Mapped[datetime.date]
-    role:Mapped[UserRole]
 
-    # связи 
+    # связи
     marks: Mapped[list["Mark"]] = relationship(back_populates="student", uselist=True)
     lessons_taught: Mapped[list["Lesson"]] = relationship(back_populates="teacher", foreign_keys="lesson_table.teacher_id")
 
