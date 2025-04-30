@@ -6,7 +6,7 @@ from src.auth.auth_shema import RegisterUser, ShowUser, LoginUser, UpdateUser
 from fastapi import HTTPException
 from src.db import get_session
 from src.auth.auth_utilits import create_access_token, dencode_password, check_password
-from src.auth.get_current_user import get_current_user
+from get_current_user import get_current_user
 
 app = APIRouter(prefix="/users", tags=["Users"])
 

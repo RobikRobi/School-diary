@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db import get_session
 from models.UserModel import User
 from auth.auth_shema import UpdateUser, ShowUser
-from auth.get_current_user import get_current_user
+from get_current_user import get_current_user
 
 app = APIRouter(prefix="/admin", tags=["admin"])
 
