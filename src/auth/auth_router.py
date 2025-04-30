@@ -1,18 +1,21 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
 from src.models.UserModel import User
 from src.auth.auth_shema import RegisterUser, ShowUser, LoginUser, UpdateUser
-from fastapi import HTTPException
 from src.db import get_session
 from src.auth.auth_utilits import create_access_token, dencode_password, check_password
-from get_current_user import get_current_user
+from src.get_current_user import get_current_user
+
 
 app = APIRouter(prefix="/users", tags=["Users"])
+
 
 @app.get("/me", response_model=ShowUser)
 async def me(me = Depends(get_current_user)):
      return me
+
 
 @app.post("/login")
 async def login_user(data:LoginUser,session:AsyncSession = Depends(get_session)):
@@ -28,6 +31,7 @@ async def login_user(data:LoginUser,session:AsyncSession = Depends(get_session))
                 "details":"user is not exists",
                 "status":401
         })
+
 
 @app.post("/register")
 async def register_user(data:RegisterUser ,session:AsyncSession = Depends(get_session)):
@@ -57,6 +61,7 @@ async def register_user(data:RegisterUser ,session:AsyncSession = Depends(get_se
         
     return data_dict
 
+
 @app.put("/update", response_model=ShowUser)
 async def update_user(data:UpdateUser,me:User = Depends(get_current_user) ,session:AsyncSession = Depends(get_session)):
     
@@ -71,7 +76,6 @@ async def update_user(data:UpdateUser,me:User = Depends(get_current_user) ,sessi
         me.email = data.email
     if data.snils:
         me.snilas = data.snils
-
 
     await session.commit()
     await session.refresh(me)

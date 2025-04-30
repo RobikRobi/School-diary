@@ -8,6 +8,7 @@ if typing.TYPE_CHECKING:
 
 from src.db import Base
 
+
 class Subject(Base):
     __tablename__ = "subject_table"
 

@@ -38,8 +38,6 @@ class User(Base):
     createdAt: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updatedAt: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
-    dob:Mapped[datetime.date]
-
     marks:Mapped[list["Mark"]] = relationship(back_populates="student", uselist=True)
     subjects: Mapped[list["Subject"]] = relationship(secondary="usersubject", back_populates="users", uselist=True)
 
