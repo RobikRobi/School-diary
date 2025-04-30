@@ -8,29 +8,29 @@ from src.db import get_session
 from src.models.SubjectModel import Subject
 
 
-subject_router = APIRouter()
+subject_router = APIRouter(prefix="/subject", tags=["Subject"])
 
 
 @subject_router.post("/subject/add")
 async def subject_add(new_subject: SubjectAdd, session: AsyncSession = Depends(get_session)):
 
-    Subject = Subject(**new_subject.model_dump())
+    subject = Subject(name_subject = new_subject.name_subject)
 
-    session.add(Subject)
+    session.add(subject)
     await session.commit()
-    await session.refresh()
+    await session.refresh(subject)
 
-    return Subject
+    return subject
 
 
 @subject_router.delete("/subject/delete")
 async def subject_delete(subject: SubjectDelete, session: AsyncSession = Depends(get_session)):
 
-    Subject = session.scalar(select(Subject).where(Subject.id == subject.subject_id))
+    Subject = await session.scalar(select(Subject).where(Subject.id == subject.subject_id))
 
     session.delete(Subject)
     await session.commit()
-    await session.refresh
+    await session.refresh(Subject)
 
     return {"Subject delete"}
 
@@ -38,7 +38,7 @@ async def subject_delete(subject: SubjectDelete, session: AsyncSession = Depends
 @subject_router.get("/subject/read")
 async def subjeck_read(subject: SubjectRead, session: AsyncSession = Depends(get_session)):
 
-    Subject = session.scalar(select(Subject).where(Subject.id == subject.subject_id))
+    Subject = await session.scalar(select(Subject).where(Subject.id == subject.subject_id))
 
     return Subject
 
@@ -46,7 +46,7 @@ async def subjeck_read(subject: SubjectRead, session: AsyncSession = Depends(get
 @subject_router.put("/subject/update")
 async def sublect_update(subject: SubjectUpdate, session: AsyncSession = Depends(get_session)):
 
-    Subject = session.scalar(select(Subject).where(Subject.id == subject.subject_id))
+    Subject = await session.scalar(select(Subject).where(Subject.id == subject.subject_id))
 
     return Subject
 
