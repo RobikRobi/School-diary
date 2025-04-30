@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from src.models.UserModel import User
@@ -6,7 +6,7 @@ from src.auth.auth_shema import RegisterUser, ShowUser, LoginUser, UpdateUser
 from fastapi import HTTPException
 from src.db import get_session
 from src.auth.auth_utilits import create_access_token, dencode_password, check_password
-from get_current_user import get_current_user
+from src.get_current_user import get_current_user
 
 app = APIRouter(prefix="/users", tags=["Users"])
 
@@ -58,13 +58,13 @@ async def register_user(data:RegisterUser ,session:AsyncSession = Depends(get_se
     return data_dict
 
 @app.put("/update", response_model=ShowUser)
-async def update_user(data:UpdateUser,me:User = Depends(get_current_user) ,session:AsyncSession = Depends(get_session)):
+async def update_user(data:UpdateUser, me:User = Depends(get_current_user), session:AsyncSession = Depends(get_session)):
     
     await session.refresh(me)
-    if data.name:
-        me.name = data.name
     if data.surname:
         me.surname = data.surname
+    if data.name:
+        me.name = data.name
     if data.patronymic:
         me.patronymic = data.patronymic
     if data.email:
@@ -77,3 +77,16 @@ async def update_user(data:UpdateUser,me:User = Depends(get_current_user) ,sessi
     await session.refresh(me)
 
     return me
+
+
+@app.delete("/delete/{user_id}")
+async def delete_user(user_id: int = Path(..., gt=0), session: AsyncSession = Depends(get_session)):
+    user = await session.scalar(select(User).where(User.id == user_id))
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    await session.delete(user)
+    await session.commit()
+
+    return {"message": f"User with ID {user_id} has been deleted"}

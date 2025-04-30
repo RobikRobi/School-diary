@@ -8,8 +8,8 @@ class LoginUser(BaseModel):
     
 class RegisterUser(BaseModel):
         
-    name: str
     surname: str
+    name: str
     patronymic: str
     snils: int
 
@@ -27,16 +27,17 @@ class RegisterUser(BaseModel):
 class ShowUser(BaseModel):
     
     id: int
-    name: str
     surname: str
+    name: str
     patronymic: str
+    email: EmailStr
     snils: int
     dob: datetime.date
 
 class ShowUserWithToken(BaseModel):
     
-    name: str
     surname: str
+    name: str
     patronymic: str
     snils: int
     dob: datetime.date
@@ -45,11 +46,12 @@ class ShowUserWithToken(BaseModel):
 
 class UpdateUser(BaseModel):
 
-    name: str | None
     surname: str | None
+    name: str | None
     patronymic: str | None
     email: EmailStr | None
     snils: int | None
+    dob: datetime.date
 
     password: str | bytes | None
     
