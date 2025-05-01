@@ -3,12 +3,12 @@ import typing
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-
 from src.db import Base
 
 if typing.TYPE_CHECKING:
     from src.models.UserModel import User
     from src.models.LessonModel import Lesson
+
 
 class Mark(Base):
     __tablename__ = "mark_table"

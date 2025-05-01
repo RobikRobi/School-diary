@@ -1,11 +1,14 @@
 import datetime
+
 from pydantic import BaseModel, EmailStr, field_validator
+
 
 class LoginUser(BaseModel):
     
     email: EmailStr
     password: str   
     
+
 class RegisterUser(BaseModel):
         
     surname: str
@@ -23,6 +26,7 @@ class RegisterUser(BaseModel):
         if len(v) < 8:
             raise ValueError("password must be at least 8 characters")
         return v
+    
 
 class ShowUser(BaseModel):
     
@@ -34,6 +38,7 @@ class ShowUser(BaseModel):
     snils: int
     dob: datetime.date
 
+
 class ShowUserWithToken(BaseModel):
     
     surname: str
@@ -43,6 +48,7 @@ class ShowUserWithToken(BaseModel):
     dob: datetime.date
 
     token: str
+
 
 class UpdateUser(BaseModel):
 

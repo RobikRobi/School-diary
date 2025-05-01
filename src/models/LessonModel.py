@@ -6,7 +6,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy import ForeignKey
 
-
 if typing.TYPE_CHECKING:
     from src.models.SubjectModel import Subject
     from src.models.MarkModel import Mark
