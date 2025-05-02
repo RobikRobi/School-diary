@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 
 from src.models.UserModel import User
 from src.auth.auth_shema import RegisterUser, ShowUser, LoginUser, UpdateUser
 from src.db import get_session
 from src.auth.auth_utilits import create_access_token, dencode_password, check_password
-from get_current_user import get_current_user
+from src.get_current_user import get_current_user
 
 app = APIRouter(prefix="/users", tags=["Users"])
 
@@ -15,16 +16,19 @@ app = APIRouter(prefix="/users", tags=["Users"])
 async def me(me = Depends(get_current_user)):
      return me
 
+@app.get("/all_users/", response_model=list[ShowUser])
+async def get_all_users(session:AsyncSession = Depends(get_session)):
+    users = await session.scalars(select((User)).options(selectinload(User.groups)))
+    return users.all()
 
 @app.post("/login")
-async def login_user(data:LoginUser,session:AsyncSession = Depends(get_session)):
-
+async def login_user(data:LoginUser, session:AsyncSession = Depends(get_session)):
     user = await session.scalar(select(User).where(User.email == data.email))
 
     if user:
         if await check_password(password=data.password, old_password=user.password):
-                user_token = await create_access_token(user_id=user.id)
-                return {"token":user_token}
+            user_token = await create_access_token(user_id=user.id)
+            return {"token":user_token}
 
     raise HTTPException(status_code=401, detail={
                 "details":"user is not exists",

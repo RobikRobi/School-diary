@@ -1,5 +1,5 @@
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from src.db import get_session
@@ -29,6 +29,13 @@ async def get_current_user(user_id = Depends(get_current_id), session:AsyncSessi
         })
     
     return user
+
+
+# метод для пользователья с ролью администратор
+# async def get_current_admin_user(user_id = Depends(get_current_id), session:AsyncSession = Depends(get_session)):
+#     if user_id.is_admin:
+#         return user_id
+#     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Недостаточно прав!')
 
 # async def get_current_confirm_seller(user:User = Depends(get_current_user)):
     
