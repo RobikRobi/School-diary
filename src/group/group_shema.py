@@ -14,3 +14,6 @@ class GroupSchema(BaseModel):
 
 class GroupUpdateRequest(BaseModel):
     name_group: str
+
+class AddSubjectToGroupRequest(BaseModel):
+    subject_id: int

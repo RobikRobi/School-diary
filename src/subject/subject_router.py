@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db import get_session
 from src.models.UserModel import User
 from src.models.SubjectModel import Subject
+from src.models.GroupModel import Group
 from src.subject.subject_shema import CreateSubject, UpdateSubject
 
 
@@ -73,4 +74,20 @@ async def update_subject(subject_id:int, subject_data: UpdateSubject, session:As
 
     return subject
 
+# получение всех групп предмета
+@app.get("/{subject_id}/groups")
+async def get_groups_by_subject(subject_id: int, session: AsyncSession = Depends(get_session)):
+    subject = await session.scalar(select(Subject).where(Subject.id == subject_id))
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+
+    groups = await session.execute(select(Group).where(Group.subject_id == subject_id))
+    group_list = groups.scalars().all()
+
+    return [
+        {
+            "id": group.id,
+            "name_group": group.name_group
+        } for group in group_list
+    ]
 

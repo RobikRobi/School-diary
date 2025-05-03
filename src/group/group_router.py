@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db import get_session
 from src.models.UserModel import User, UsersGroups
 from src.models.GroupModel import Group
-from src.group.group_shema import CreateGroup, AddUserToGroupSchema, GroupSchema, GroupUpdateRequest
+from src.models.SubjectModel import Subject
+from src.group.group_shema import CreateGroup, AddUserToGroupSchema, GroupSchema, GroupUpdateRequest, AddSubjectToGroupRequest
 from src.auth.auth_shema import UserShema
 
 
@@ -111,3 +112,19 @@ async def update_group_name(group_id: int, data: GroupUpdateRequest, session: As
     await session.refresh(group)
 
     return {"detail": f"Group {group_id} name updated", "group": {"id": group.id, "name_group": group.name_group}}
+
+@app.put("/groups/add-subject/{group_id}")
+async def add_subject_to_group(group_id: int, data: AddSubjectToGroupRequest, session: AsyncSession = Depends(get_session)):
+    group = await session.scalar(select(Group).where(Group.id == group_id))
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    subject = await session.scalar(select(Subject).where(Subject.id == data.subject_id))
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found")
+
+    group.subject_id = data.subject_id
+    await session.commit()
+    await session.refresh(group)
+
+    return {"detail": f"Subject {data.subject_id} added to group {group_id}"}

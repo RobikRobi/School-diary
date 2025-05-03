@@ -19,7 +19,7 @@ class Group(Base):
     __tablename__ = "group_table"
 
     id:Mapped[int] = mapped_column(primary_key=True)
-    subject_id: Mapped[int] = mapped_column(ForeignKey('subject_table.id'))
+    subject_id: Mapped[int] = mapped_column(ForeignKey('subject_table.id'), nullable=True)
 
     name_group: Mapped[str]
 
