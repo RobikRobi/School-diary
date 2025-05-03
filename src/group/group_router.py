@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db import get_session
 from src.models.UserModel import User, UsersGroups
 from src.models.GroupModel import Group
-from src.group.group_shema import CreateGroup, AddUserToGroupSchema, GroupSchema
+from src.group.group_shema import CreateGroup, AddUserToGroupSchema, GroupSchema, GroupUpdateRequest
 from src.auth.auth_shema import UserShema
 
 
@@ -79,6 +79,7 @@ async def get_users_in_group(group_id: int, session: AsyncSession = Depends(get_
 
     return group.users
 
+# удаление пользователя из группы
 @app.delete("/{group_id}/user/{user_id}")
 async def remove_user_from_group(group_id: int, user_id: int, session: AsyncSession = Depends(get_session)):
     # Проверка существования пользователя и группы
@@ -97,3 +98,16 @@ async def remove_user_from_group(group_id: int, user_id: int, session: AsyncSess
     await session.commit()
 
     return {"detail": f"User {user_id} removed from group {group_id}"}
+
+# редактирование названия группы
+@app.put("/{group_id}")
+async def update_group_name(group_id: int, data: GroupUpdateRequest, session: AsyncSession = Depends(get_session)):
+    group = await session.scalar(select(Group).where(Group.id == group_id))
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    group.name_group = data.name_group
+    await session.commit()
+    await session.refresh(group)
+
+    return {"detail": f"Group {group_id} name updated", "group": {"id": group.id, "name_group": group.name_group}}
