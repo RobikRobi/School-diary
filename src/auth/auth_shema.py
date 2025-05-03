@@ -28,7 +28,7 @@ class RegisterUser(BaseModel):
         return v
     
 
-class ShowUser(BaseModel):
+class UserShema(BaseModel):
     
     id: int
     surname: str

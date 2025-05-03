@@ -4,7 +4,7 @@ from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
 from src.models.UserModel import User
-from src.auth.auth_shema import RegisterUser, ShowUser, LoginUser, UpdateUser
+from src.auth.auth_shema import RegisterUser, UserShema, LoginUser, UpdateUser
 from src.db import get_session
 from src.auth.auth_utilits import create_access_token, dencode_password, check_password
 from src.get_current_user import get_current_user
@@ -12,11 +12,11 @@ from src.get_current_user import get_current_user
 app = APIRouter(prefix="/users", tags=["Users"])
 
 
-@app.get("/me", response_model=ShowUser)
+@app.get("/me", response_model=UserShema)
 async def me(me = Depends(get_current_user)):
      return me
 
-@app.get("/all_users/", response_model=list[ShowUser])
+@app.get("/all_users/", response_model=list[UserShema])
 async def get_all_users(session:AsyncSession = Depends(get_session)):
     users = await session.scalars(select((User)).options(selectinload(User.groups)))
     return users.all()
@@ -65,7 +65,7 @@ async def register_user(data:RegisterUser ,session:AsyncSession = Depends(get_se
     return data_dict
 
 
-@app.put("/update", response_model=ShowUser)
+@app.put("/update", response_model=UserShema)
 async def update_user(data:UpdateUser, me:User = Depends(get_current_user), session:AsyncSession = Depends(get_session)):
     
     await session.refresh(me)
@@ -97,3 +97,4 @@ async def delete_user(user_id: int = Path(..., gt=0), session: AsyncSession = De
     await session.commit()
 
     return {"message": f"User with ID {user_id} has been deleted"}
+
