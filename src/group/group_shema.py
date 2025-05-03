@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 
 class CreateGroup(BaseModel):
-    
     name_group: str
 
 class AddUserToGroupSchema(BaseModel):
@@ -11,4 +10,7 @@ class AddUserToGroupSchema(BaseModel):
 
 class GroupSchema(BaseModel):
     id: int
+    name_group: str
+
+class GroupUpdateRequest(BaseModel):
     name_group: str

@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, delete
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db import get_session
 from src.models.UserModel import User, UsersGroups
 from src.models.GroupModel import Group
-from src.group.group_shema import CreateGroup, AddUserToGroupSchema, GroupSchema
+from src.group.group_shema import CreateGroup, AddUserToGroupSchema, GroupSchema, GroupUpdateRequest
 from src.auth.auth_shema import UserShema
 
 
@@ -18,7 +18,7 @@ async def get_groups(session:AsyncSession = Depends(get_session)):
     profiles = await session.scalars(select(Group))
     return profiles.all()
 
-
+# получение конкретной группы
 @app.get("/groups/{group_id}", response_model=GroupSchema)
 async def get_group_by_id(group_id: int, session: AsyncSession = Depends(get_session)):
     group = await session.scalar(select(Group).where(Group.id == group_id))
@@ -28,7 +28,7 @@ async def get_group_by_id(group_id: int, session: AsyncSession = Depends(get_ses
 
     return group
 
-#создание группы
+# создание группы
 @app.post("/groups/create")
 async def create_group(data:CreateGroup, session:AsyncSession = Depends(get_session)):
     newGroup = Group(**data.model_dump())
@@ -38,6 +38,7 @@ async def create_group(data:CreateGroup, session:AsyncSession = Depends(get_sess
     
     return newGroup
 
+# добавление пользователей в группу
 @app.post("/groups/users/add-user")
 async def add_user_to_group(data: AddUserToGroupSchema, session: AsyncSession = Depends(get_session)):
     # Проверка существования пользователя и группы
@@ -66,6 +67,7 @@ async def add_user_to_group(data: AddUserToGroupSchema, session: AsyncSession = 
 
     return {"message": "User added to group"}
 
+# получение всех пользователей в группе
 @app.get("/groups/users/{group_id}", response_model=list[UserShema])
 async def get_users_in_group(group_id: int, session: AsyncSession = Depends(get_session)):
     group = await session.scalar(select(Group).where(Group.id == group_id).options(
@@ -76,3 +78,36 @@ async def get_users_in_group(group_id: int, session: AsyncSession = Depends(get_
         raise HTTPException(status_code=404, detail="Group not found")
 
     return group.users
+
+# удаление пользователя из группы
+@app.delete("/{group_id}/user/{user_id}")
+async def remove_user_from_group(group_id: int, user_id: int, session: AsyncSession = Depends(get_session)):
+    # Проверка существования пользователя и группы
+    user = await session.scalar(select(User).where(User.id == user_id))
+    group = await session.scalar(select(Group).where(Group.id == group_id))
+
+    if not user or not group:
+        raise HTTPException(status_code=404, detail="User or group not found")
+
+    # Удаление записи из таблицы usergroup
+    stmt = delete(UsersGroups).where(
+        UsersGroups.group_id == group_id,
+        UsersGroups.user_id == user_id
+    )
+    await session.execute(stmt)
+    await session.commit()
+
+    return {"detail": f"User {user_id} removed from group {group_id}"}
+
+# редактирование названия группы
+@app.put("/{group_id}")
+async def update_group_name(group_id: int, data: GroupUpdateRequest, session: AsyncSession = Depends(get_session)):
+    group = await session.scalar(select(Group).where(Group.id == group_id))
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    group.name_group = data.name_group
+    await session.commit()
+    await session.refresh(group)
+
+    return {"detail": f"Group {group_id} name updated", "group": {"id": group.id, "name_group": group.name_group}}

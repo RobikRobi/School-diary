@@ -15,5 +15,5 @@ class Subject(Base):
     id:Mapped[int] = mapped_column(primary_key=True)
 
     name_subject: Mapped[str]
-    groups: Mapped[list["Group"]] = relationship(secondary="groupsubject", back_populates="subjects", uselist=True)
+    groups: Mapped[list["Group"]] = relationship(back_populates="subject", uselist=True)
     lessons: Mapped[list["Lesson"]] = relationship(back_populates="subject")

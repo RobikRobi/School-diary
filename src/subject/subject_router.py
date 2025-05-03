@@ -11,7 +11,7 @@ from src.subject.subject_shema import CreateSubject, UpdateSubject
 
 app = APIRouter(prefix="/subject", tags=["Subject"])
 
-
+# получение всех предметов
 @app.get("/subjects")
 async def get_subjects(session:AsyncSession = Depends(get_session)):
 
@@ -19,7 +19,7 @@ async def get_subjects(session:AsyncSession = Depends(get_session)):
 
     return profiles.all()
 
-
+# получение конкретного предмета
 @app.get("/subjects/{subject_id}")
 async def get_subject(subject_id: int, session: AsyncSession = Depends(get_session)):
 
@@ -30,7 +30,7 @@ async def get_subject(subject_id: int, session: AsyncSession = Depends(get_sessi
 
     return subject
 
-
+# создание предмета
 @app.post("/subjects/create")
 async def create_subject(data:CreateSubject, session:AsyncSession = Depends(get_session)):
 
@@ -42,7 +42,7 @@ async def create_subject(data:CreateSubject, session:AsyncSession = Depends(get_
 
     return newSubject
 
-
+# удаление предмета
 @app.delete("/subjects/delete")
 async def delete_subject(subject_id:int, session:AsyncSession = Depends(get_session)):
 
@@ -56,7 +56,7 @@ async def delete_subject(subject_id:int, session:AsyncSession = Depends(get_sess
 
     return {"Subject delete"}
 
-
+# изменение предмета
 @app.put("/subjects/update")
 async def update_subject(subject_id:int, subject_data: UpdateSubject, session:AsyncSession = Depends(get_session)):
     
