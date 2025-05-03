@@ -9,7 +9,7 @@ from src.models.SubjectModel import Subject
 from src.subject.subject_shema import CreateSubject, UpdateSubject
 
 
-app = APIRouter(prefix="/subject", tags=["subject"])
+app = APIRouter(prefix="/subject", tags=["Subject"])
 
 
 @app.get("/subjects")

@@ -16,6 +16,7 @@ from src.models.GroupModel import Group
 from src.auth.auth_router import app as auth_app
 from src.subject.subject_router import app as subject_app
 from src.group.group_router import app as group_app
+from src.lesson.lesson_router import lesson_router
 
 
 
@@ -25,6 +26,7 @@ app = FastAPI()
 app.include_router(auth_app)
 app.include_router(subject_app)
 app.include_router(group_app)
+app.include_router(lesson_router)
 
 # CORS
 
