@@ -11,16 +11,18 @@ from src.get_current_user import get_current_user
 
 app = APIRouter(prefix="/users", tags=["Users"])
 
-
+# получение авторизованного пользователя
 @app.get("/me", response_model=UserShema)
 async def me(me = Depends(get_current_user)):
      return me
 
+# получение всех пользователей
 @app.get("/all_users/", response_model=list[UserShema])
 async def get_all_users(session:AsyncSession = Depends(get_session)):
     users = await session.scalars(select((User)).options(selectinload(User.groups)))
     return users.all()
 
+# авторизация
 @app.post("/login")
 async def login_user(data:LoginUser, session:AsyncSession = Depends(get_session)):
     user = await session.scalar(select(User).where(User.email == data.email))
@@ -36,6 +38,7 @@ async def login_user(data:LoginUser, session:AsyncSession = Depends(get_session)
         })
 
 
+# регистрация
 @app.post("/register")
 async def register_user(data:RegisterUser ,session:AsyncSession = Depends(get_session)):
     
@@ -64,7 +67,7 @@ async def register_user(data:RegisterUser ,session:AsyncSession = Depends(get_se
         
     return data_dict
 
-
+# изменений данных пользователя
 @app.put("/update", response_model=UserShema)
 async def update_user(data:UpdateUser, me:User = Depends(get_current_user), session:AsyncSession = Depends(get_session)):
     
@@ -85,7 +88,7 @@ async def update_user(data:UpdateUser, me:User = Depends(get_current_user), sess
 
     return me
 
-
+# удаление пользователя
 @app.delete("/delete/{user_id}")
 async def delete_user(user_id: int = Path(..., gt=0), session: AsyncSession = Depends(get_session)):
     user = await session.scalar(select(User).where(User.id == user_id))

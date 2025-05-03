@@ -18,7 +18,7 @@ async def get_groups(session:AsyncSession = Depends(get_session)):
     profiles = await session.scalars(select(Group))
     return profiles.all()
 
-
+# получение конкретной группы
 @app.get("/groups/{group_id}", response_model=GroupSchema)
 async def get_group_by_id(group_id: int, session: AsyncSession = Depends(get_session)):
     group = await session.scalar(select(Group).where(Group.id == group_id))
@@ -28,7 +28,7 @@ async def get_group_by_id(group_id: int, session: AsyncSession = Depends(get_ses
 
     return group
 
-#создание группы
+# создание группы
 @app.post("/groups/create")
 async def create_group(data:CreateGroup, session:AsyncSession = Depends(get_session)):
     newGroup = Group(**data.model_dump())
@@ -38,6 +38,7 @@ async def create_group(data:CreateGroup, session:AsyncSession = Depends(get_sess
     
     return newGroup
 
+# добавление пользователей в группу
 @app.post("/groups/users/add-user")
 async def add_user_to_group(data: AddUserToGroupSchema, session: AsyncSession = Depends(get_session)):
     # Проверка существования пользователя и группы
@@ -66,6 +67,7 @@ async def add_user_to_group(data: AddUserToGroupSchema, session: AsyncSession = 
 
     return {"message": "User added to group"}
 
+# получение всех пользователей в группе
 @app.get("/groups/users/{group_id}", response_model=list[UserShema])
 async def get_users_in_group(group_id: int, session: AsyncSession = Depends(get_session)):
     group = await session.scalar(select(Group).where(Group.id == group_id).options(
