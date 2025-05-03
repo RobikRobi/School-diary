@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, delete
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -78,3 +78,22 @@ async def get_users_in_group(group_id: int, session: AsyncSession = Depends(get_
         raise HTTPException(status_code=404, detail="Group not found")
 
     return group.users
+
+@app.delete("/{group_id}/user/{user_id}")
+async def remove_user_from_group(group_id: int, user_id: int, session: AsyncSession = Depends(get_session)):
+    # Проверка существования пользователя и группы
+    user = await session.scalar(select(User).where(User.id == user_id))
+    group = await session.scalar(select(Group).where(Group.id == group_id))
+
+    if not user or not group:
+        raise HTTPException(status_code=404, detail="User or group not found")
+
+    # Удаление записи из таблицы usergroup
+    stmt = delete(UsersGroups).where(
+        UsersGroups.group_id == group_id,
+        UsersGroups.user_id == user_id
+    )
+    await session.execute(stmt)
+    await session.commit()
+
+    return {"detail": f"User {user_id} removed from group {group_id}"}

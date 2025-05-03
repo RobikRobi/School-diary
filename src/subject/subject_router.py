@@ -23,7 +23,7 @@ async def get_subjects(session:AsyncSession = Depends(get_session)):
 @app.get("/subjects/{subject_id}")
 async def get_subject(subject_id: int, session: AsyncSession = Depends(get_session)):
 
-    subject = await session.scalar(select(Subject).where(Subject.id == subject_id).options(Subject.name_subject))
+    subject = await session.scalar(select(Subject).where(Subject.id == subject_id))
 
     if not subject:
         raise HTTPException(status_code=404, detail="Subject not found")
