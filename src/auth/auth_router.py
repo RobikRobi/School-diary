@@ -1,31 +1,34 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 
 from src.models.UserModel import User
-from src.auth.auth_shema import RegisterUser, ShowUser, LoginUser, UpdateUser
+from src.auth.auth_shema import RegisterUser, UserShema, LoginUser, UpdateUser
 from src.db import get_session
 from src.auth.auth_utilits import create_access_token, dencode_password, check_password
 from src.get_current_user import get_current_user
 
-
 app = APIRouter(prefix="/users", tags=["Users"])
 
 
-@app.get("/me", response_model=ShowUser)
+@app.get("/me", response_model=UserShema)
 async def me(me = Depends(get_current_user)):
      return me
 
+@app.get("/all_users/", response_model=list[UserShema])
+async def get_all_users(session:AsyncSession = Depends(get_session)):
+    users = await session.scalars(select((User)).options(selectinload(User.groups)))
+    return users.all()
 
 @app.post("/login")
-async def login_user(data:LoginUser,session:AsyncSession = Depends(get_session)):
-
+async def login_user(data:LoginUser, session:AsyncSession = Depends(get_session)):
     user = await session.scalar(select(User).where(User.email == data.email))
 
     if user:
         if await check_password(password=data.password, old_password=user.password):
-                user_token = await create_access_token(user_id=user.id)
-                return {"token":user_token}
+            user_token = await create_access_token(user_id=user.id)
+            return {"token":user_token}
 
     raise HTTPException(status_code=401, detail={
                 "details":"user is not exists",
@@ -62,14 +65,14 @@ async def register_user(data:RegisterUser ,session:AsyncSession = Depends(get_se
     return data_dict
 
 
-@app.put("/update", response_model=ShowUser)
-async def update_user(data:UpdateUser,me:User = Depends(get_current_user) ,session:AsyncSession = Depends(get_session)):
+@app.put("/update", response_model=UserShema)
+async def update_user(data:UpdateUser, me:User = Depends(get_current_user), session:AsyncSession = Depends(get_session)):
     
     await session.refresh(me)
-    if data.name:
-        me.name = data.name
     if data.surname:
         me.surname = data.surname
+    if data.name:
+        me.name = data.name
     if data.patronymic:
         me.patronymic = data.patronymic
     if data.email:
@@ -81,3 +84,17 @@ async def update_user(data:UpdateUser,me:User = Depends(get_current_user) ,sessi
     await session.refresh(me)
 
     return me
+
+
+@app.delete("/delete/{user_id}")
+async def delete_user(user_id: int = Path(..., gt=0), session: AsyncSession = Depends(get_session)):
+    user = await session.scalar(select(User).where(User.id == user_id))
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    await session.delete(user)
+    await session.commit()
+
+    return {"message": f"User with ID {user_id} has been deleted"}
+

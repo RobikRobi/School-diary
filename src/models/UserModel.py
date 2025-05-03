@@ -20,8 +20,8 @@ class User(Base):
 
     id:Mapped[int] = mapped_column(primary_key=True)
 
-    name:Mapped[str]
     surname:Mapped[str]
+    name:Mapped[str]
     patronymic:Mapped[str]
     snils:Mapped[int] = mapped_column(unique=True)
 

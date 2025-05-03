@@ -9,10 +9,10 @@ from src.models.SubjectModel import Subject
 from src.subject.subject_shema import CreateSubject, UpdateSubject
 
 
-subject_router = APIRouter(prefix="/subject", tags=["subject"])
+app = APIRouter(prefix="/subject", tags=["subject"])
 
 
-@subject_router.get("/subjects")
+@app.get("/subjects")
 async def get_subjects(session:AsyncSession = Depends(get_session)):
 
     profiles = await session.scalars(select(Subject))
@@ -20,7 +20,7 @@ async def get_subjects(session:AsyncSession = Depends(get_session)):
     return profiles.all()
 
 
-@subject_router.get("/subjects/{subject_id}")
+@app.get("/subjects/{subject_id}")
 async def get_subject(subject_id: int, session: AsyncSession = Depends(get_session)):
 
     subject = await session.scalar(select(Subject).where(Subject.id == subject_id))
@@ -31,7 +31,7 @@ async def get_subject(subject_id: int, session: AsyncSession = Depends(get_sessi
     return subject
 
 
-@subject_router.post("/subjects/create")
+@app.post("/subjects/create")
 async def create_subject(data:CreateSubject, session:AsyncSession = Depends(get_session)):
 
     newSubject = Subject(**data.model_dump())
@@ -43,7 +43,7 @@ async def create_subject(data:CreateSubject, session:AsyncSession = Depends(get_
     return newSubject
 
 
-@subject_router.delete("/subjects/delete")
+@app.delete("/subjects/delete")
 async def delete_subject(subject_id:int, session:AsyncSession = Depends(get_session)):
 
     subject = await session.scalar(select(Subject).where(Subject.id == subject_id))
@@ -57,7 +57,7 @@ async def delete_subject(subject_id:int, session:AsyncSession = Depends(get_sess
     return {"Subject delete"}
 
 
-@subject_router.put("/subjects/update")
+@app.put("/subjects/update")
 async def update_subject(subject_id:int, subject_data: UpdateSubject, session:AsyncSession = Depends(get_session)):
     
     subject = await session.scalar(select(Subject).where(Subject.id == subject_id))
