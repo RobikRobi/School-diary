@@ -19,16 +19,11 @@ class Group(Base):
     __tablename__ = "group_table"
 
     id:Mapped[int] = mapped_column(primary_key=True)
+    subject_id: Mapped[int] = mapped_column(ForeignKey('subject_table.id'))
 
     name_group: Mapped[str]
 
     # Связи
-    subjects: Mapped[list["Subject"]] = relationship(secondary="groupsubject", back_populates="groups", uselist=True)
+    subject: Mapped["Subject"] = relationship(back_populates="groups", uselist=False)
     users: Mapped[list["User"]] = relationship(secondary="usergroup", back_populates="groups", uselist=True)
-    lessons: Mapped[list["Lesson"]] = relationship(back_populates="group", uselist=True)
-
-
-class GroupsSubjects(Base):
-	__tablename__ = "groupsubject"
-	group_id:Mapped[int] = mapped_column(ForeignKey("subject_table.id"),primary_key=True)
-	subject_id:Mapped[int] = mapped_column(ForeignKey("group_table.id"),primary_key=True)
+    lessons: Mapped["Lesson"] = relationship(back_populates="group", uselist=False)
