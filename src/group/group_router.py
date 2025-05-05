@@ -113,6 +113,7 @@ async def update_group_name(group_id: int, data: GroupUpdateRequest, session: As
 
     return {"detail": f"Group {group_id} name updated", "group": {"id": group.id, "name_group": group.name_group}}
 
+# добавление группе предмета
 @app.put("/groups/add-subject/{group_id}")
 async def add_subject_to_group(group_id: int, data: AddSubjectToGroupRequest, session: AsyncSession = Depends(get_session)):
     group = await session.scalar(select(Group).where(Group.id == group_id))
