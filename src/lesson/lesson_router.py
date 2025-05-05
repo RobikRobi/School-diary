@@ -8,10 +8,10 @@ from src.db import get_session
 from src.models.LessonModel import Lesson
 
 
-lesson_router = APIRouter(prefix="/lesson", tags=["Lesson"])
+app = APIRouter(prefix="/lesson", tags=["lessons"])
 
 
-@lesson_router.post("/lesson/create")
+@app.post("/lesson/create")
 async def create_lesson(lesson:DataLesson, session:AsyncSession = Depends(get_session)):
 
     NewLesson = Lesson(**lesson.model_dump())
@@ -23,7 +23,7 @@ async def create_lesson(lesson:DataLesson, session:AsyncSession = Depends(get_se
     return NewLesson
 
 
-@lesson_router.get("/lesson/get")
+@app.get("/lesson/get")
 async def get_lessons_group(group_id:int, session:AsyncSession = Depends(get_session)):
 
     lessons = await session.scalars(select(Lesson).where(Lesson.group_id == group_id))
@@ -31,7 +31,7 @@ async def get_lessons_group(group_id:int, session:AsyncSession = Depends(get_ses
     return lessons.all()
 
 
-@lesson_router.delete("/lesson/delete")
+@app.delete("/lesson/delete")
 async def delete_lesson(lesson_id:int, session:AsyncSession = Depends(get_session)):
 
     lesson = await session.scalar(select(Lesson).where(Lesson.id == lesson_id))
@@ -42,7 +42,7 @@ async def delete_lesson(lesson_id:int, session:AsyncSession = Depends(get_sessio
     return {"lesson delete"}
 
 
-@lesson_router.put("/lesson/update")
+@app.put("/lesson/update")
 async def update_lesson(lesson_id:int, data_lesson:DataLesson, session:AsyncSession = Depends(get_session)):
 
     lesson = await session.scalar(select(Lesson).where(Lesson.id == lesson_id))
