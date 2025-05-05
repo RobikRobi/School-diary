@@ -10,7 +10,7 @@ from src.models.GroupModel import Group
 from src.subject.subject_shema import CreateSubject, UpdateSubject
 
 
-app = APIRouter(prefix="/subject", tags=["Subject"])
+app = APIRouter(prefix="/subject", tags=["subject"])
 
 # получение всех предметов
 @app.get("/subjects")
