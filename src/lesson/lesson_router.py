@@ -7,6 +7,9 @@ from src.lesson.lesson_shema import DataLesson
 from src.db import get_session
 from src.models.LessonModel import Lesson
 from src.models.MarkModel import Mark
+from src.models.UserModel import User
+from src.get_current_user import get_current_user
+from src.enum.UserEnum import UserRole
 
 
 app = APIRouter(prefix="/lesson", tags=["lessons"])
@@ -66,11 +69,18 @@ async def update_lesson(lesson_id:int, data_lesson:DataLesson, session:AsyncSess
 
 # выставление оценки пользователю за урок
 @app.websocket("/ws/grade")
-async def grade_user_via_ws(
-    websocket: WebSocket,
-    session: AsyncSession = Depends(get_session)
+async def grade_user_via_ws(websocket: WebSocket,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
 ):
     await websocket.accept()
+    
+    # Проверяем роль пользователя
+    if current_user.role != UserRole.TEACHER:
+        await websocket.send_json({"error": "Access denied. Only TEACHERs can assign marks."})
+        await websocket.close()
+        return
+
     try:
         while True:
             data = await websocket.receive_json()
