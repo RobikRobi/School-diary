@@ -10,7 +10,6 @@ if typing.TYPE_CHECKING:
     from src.models.MarkModel import Mark
     from src.models.GroupModel import Group
     from src.models.LessonModel import Lesson
-    from src.models.SubjectModel import Subject
 
 from src.db import Base
 from src.enum.UserEnum import UserRole
