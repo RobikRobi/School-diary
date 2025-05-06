@@ -20,7 +20,7 @@ from src.subject.subject_router import app as subject_app
 from src.group.group_router import app as group_app
 from src.lesson.lesson_router import app as lessons_app
 from src.admin_panel.admin_router import app as admin_app
-
+from src.marks.marks_router import app as marks_app
 
 
 app = FastAPI()
@@ -31,6 +31,7 @@ app.include_router(subject_app)
 app.include_router(group_app)
 app.include_router(lessons_app)
 app.include_router(admin_app)
+app.include_router(marks_app)
 
 # CORS
 

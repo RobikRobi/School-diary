@@ -62,6 +62,8 @@ async def grade_user_via_ws(websocket: WebSocket,
     except WebSocketDisconnect:
         print("WebSocket disconnected")
 
+
+# получение оценок
 @app.get("/", response_model=List[MarkRead])
 async def get_marks(
     group_id: Optional[int] = Query(None),
