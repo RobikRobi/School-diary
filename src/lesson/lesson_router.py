@@ -6,10 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.lesson.lesson_shema import DataLesson
 from src.db import get_session
 from src.models.LessonModel import Lesson
-from src.models.MarkModel import Mark
-from src.models.UserModel import User
-from src.get_current_user import get_current_user
-from src.enum.UserEnum import UserRole
+
 
 
 app = APIRouter(prefix="/lesson", tags=["lessons"])
@@ -66,50 +63,3 @@ async def update_lesson(lesson_id:int, data_lesson:DataLesson, session:AsyncSess
     await session.refresh(lesson)
 
     return lesson
-
-# выставление оценки пользователю за урок
-@app.websocket("/ws/grade")
-async def grade_user_via_ws(websocket: WebSocket,
-    session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user)
-):
-    await websocket.accept()
-    
-    # Проверяем роль пользователя
-    if current_user.role != UserRole.TEACHER:
-        await websocket.send_json({"error": "Access denied. Only TEACHERs can assign marks."})
-        await websocket.close()
-        return
-
-    try:
-        while True:
-            data = await websocket.receive_json()
-
-            student_id = data.get("student_id")
-            lesson_id = data.get("lesson_id")
-            value = data.get("value")
-
-            if not all([student_id, lesson_id, value]):
-                await websocket.send_json({"error": "Missing fields"})
-                continue
-
-            # Проверим, есть ли уже оценка
-            stmt = select(Mark).where(
-                Mark.student_id == student_id,
-                Mark.lesson_id == lesson_id
-            )
-            result = await session.execute(stmt)
-            mark = result.scalars().first()
-
-            if mark:
-                mark.value = value  # обновим оценку
-            else:
-                mark = Mark(student_id=student_id, lesson_id=lesson_id, value=value)
-                session.add(mark)
-
-            await session.commit()
-
-            await websocket.send_json({"status": "success", "student_id": student_id, "value": value})
-
-    except WebSocketDisconnect:
-        print("WebSocket disconnected")
