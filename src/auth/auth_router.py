@@ -92,7 +92,7 @@ async def update_user(data:UpdateUser, me:User = Depends(get_current_user), sess
 @app.delete("/delete/{user_id}")
 async def delete_user(user_id: int = Path(..., gt=0), current_user: User = Depends(get_current_user), session: AsyncSession = Depends(get_session)):
     # Проверка, что текущий пользователь — админ
-    if current_user.role != "ADMIN":
+    if current_user.role.value != "ADMIN":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Вы не имеете прав на удаление пользователя."
