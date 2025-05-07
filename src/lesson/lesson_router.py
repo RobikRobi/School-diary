@@ -8,7 +8,6 @@ from src.db import get_session
 from src.models.LessonModel import Lesson
 
 
-
 app = APIRouter(prefix="/lesson", tags=["lessons"])
 
 

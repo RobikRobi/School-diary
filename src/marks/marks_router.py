@@ -12,19 +12,34 @@ from src.models.UserModel import User
 from src.get_current_user import get_current_user
 from src.enum.UserEnum import UserRole
 from src.marks.marks_shema import MarkRead
+from src.auth.auth_utilits import valid_access_token
 
 app = APIRouter(prefix="/marks", tags=["grade"])
 
 
+
+# вебсокет для выставления оценок
 @app.websocket("/ws/grade")
 async def grade_user_via_ws(websocket: WebSocket,
-    session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    session: AsyncSession = Depends(get_session)
 ):
+    token = websocket.headers.get("Authorization")
+    if not token:
+        print("Error")
+    token = token[7:]
+    user_id = await valid_access_token(token)
+    user = await session.scalar(select(User).where(User.id == user_id))
+
+    if not user:
+        await websocket.send_json({
+            "token":"Your token is not valid", 
+            "status":426
+        })
+        await websocket.close()
     await websocket.accept()
     
     # Проверяем роль пользователя
-    if current_user.role != UserRole.TEACHER:
+    if user.role != UserRole.TEACHER:
         await websocket.send_json({"error": "Access denied. Only TEACHERs can assign marks."})
         await websocket.close()
         return
@@ -55,12 +70,12 @@ async def grade_user_via_ws(websocket: WebSocket,
                 mark = Mark(student_id=student_id, lesson_id=lesson_id, value=value)
                 session.add(mark)
 
-            await session.commit()
-
             await websocket.send_json({"status": "success", "student_id": student_id, "value": value})
 
     except WebSocketDisconnect:
         print("WebSocket disconnected")
+
+        await session.commit()
 
 
 # получение оценок
