@@ -11,7 +11,7 @@ from src.group.group_shema import CreateGroup, AddUserToGroupSchema, GroupSchema
 from src.auth.auth_shema import UserShema
 
 
-app = APIRouter(prefix="/group", tags=["group"])
+app = APIRouter(prefix="/group", tags=["Group"])
 
 # получение списка всех групп
 @app.get("/groups")

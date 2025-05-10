@@ -14,7 +14,7 @@ from src.enum.UserEnum import UserRole
 from src.marks.marks_shema import MarkRead
 from src.auth.auth_utilits import valid_access_token
 
-app = APIRouter(prefix="/marks", tags=["grade"])
+app = APIRouter(prefix="/marks", tags=["Grade"])
 
 
 
