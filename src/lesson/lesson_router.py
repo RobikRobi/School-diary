@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect, HTTPException
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,6 +36,9 @@ async def delete_lesson(lesson_id:int, session:AsyncSession = Depends(get_sessio
 
     lesson = await session.scalar(select(Lesson).where(Lesson.id == lesson_id))
 
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
     await session.delete(lesson)
     await session.commit()
     
@@ -46,6 +49,9 @@ async def delete_lesson(lesson_id:int, session:AsyncSession = Depends(get_sessio
 async def update_lesson(lesson_id:int, data_lesson:DataLesson, session:AsyncSession = Depends(get_session)):
 
     lesson = await session.scalar(select(Lesson).where(Lesson.id == lesson_id))
+
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
 
     if data_lesson.subject_id:
         lesson.subject_id = data_lesson.subject_id
