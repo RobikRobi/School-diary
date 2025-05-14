@@ -6,8 +6,8 @@ from sqlalchemy.orm import  Mapped, mapped_column,relationship
 from src.db import Base
 
 if typing.TYPE_CHECKING:
-    from ..UserModel import User
-    from .MessageModel import Message
+    from src.models.UserModel import User
+    from src.models.MessageModel import Message
 
 class Chat(Base):
     __tablename__ = "chat_table"
