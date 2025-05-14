@@ -1,9 +1,6 @@
-import datetime
 import typing
 
-from sqlalchemy import DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import func
 from sqlalchemy import ForeignKey
 
 

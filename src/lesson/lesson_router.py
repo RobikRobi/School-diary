@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +10,7 @@ from src.models.LessonModel import Lesson
 
 app = APIRouter(prefix="/lesson", tags=["Lessons"])
 
-
+# создание урока
 @app.post("/lesson/create")
 async def create_lesson(lesson:DataLesson, session:AsyncSession = Depends(get_session)):
 
@@ -22,7 +22,7 @@ async def create_lesson(lesson:DataLesson, session:AsyncSession = Depends(get_se
 
     return NewLesson
 
-
+# получение уроков у конкретной группы
 @app.get("/lesson/get")
 async def get_lessons_group(group_id:int, session:AsyncSession = Depends(get_session)):
 
@@ -30,7 +30,7 @@ async def get_lessons_group(group_id:int, session:AsyncSession = Depends(get_ses
 
     return lessons.all()
 
-
+# удаление урока
 @app.delete("/lesson/delete")
 async def delete_lesson(lesson_id:int, session:AsyncSession = Depends(get_session)):
 
@@ -41,7 +41,7 @@ async def delete_lesson(lesson_id:int, session:AsyncSession = Depends(get_sessio
     
     return {"lesson delete"}
 
-
+# изменение урока
 @app.put("/lesson/update")
 async def update_lesson(lesson_id:int, data_lesson:DataLesson, session:AsyncSession = Depends(get_session)):
 

@@ -9,7 +9,6 @@ from src.db import get_session
 from src.models.LessonModel import Lesson
 from src.models.MarkModel import Mark
 from src.models.UserModel import User
-from src.get_current_user import get_current_user
 from src.enum.UserEnum import UserRole
 from src.marks.marks_shema import MarkRead
 from src.auth.auth_utilits import valid_access_token

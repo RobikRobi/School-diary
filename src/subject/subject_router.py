@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.db import get_session
-from src.models.UserModel import User
 from src.models.SubjectModel import Subject
 from src.models.GroupModel import Group
 from src.subject.subject_shema import CreateSubject, UpdateSubject

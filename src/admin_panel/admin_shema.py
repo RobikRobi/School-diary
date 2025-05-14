@@ -1,5 +1,3 @@
-import datetime
-
 from pydantic import BaseModel
 from src.enum.UserEnum import UserRole
 
