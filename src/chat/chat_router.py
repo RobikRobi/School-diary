@@ -46,6 +46,8 @@ async def websocket_endpoint(websocket: WebSocket,
                              session: AsyncSession = Depends(get_session)):
 
     token = websocket.headers.get("Authorization")
+    if not token:
+        print("Error")
     token = token[7:]
     user_id = await valid_access_token(token)
     user = await session.scalar(select(User).where(User.id == user_id))
