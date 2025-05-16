@@ -75,7 +75,9 @@ async def update_subject(subject_id:int, subject_data: UpdateSubject, session:As
 # получение всех групп предмета
 @app.get("/{subject_id}/groups")
 async def get_groups_by_subject(subject_id: int, session: AsyncSession = Depends(get_session)):
+
     subject = await session.scalar(select(Subject).where(Subject.id == subject_id))
+    
     if not subject:
         raise HTTPException(status_code=404, detail="Subject not found")
 
