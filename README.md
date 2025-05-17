@@ -5,34 +5,38 @@ School Diary — это backend-сервис для электронной шк�
 2. 🚀 Getting Started
 🧾 Установка (локально)
 
-    Клонируйте репозиторий:
+Клонируйте репозиторий:
 
+```powershell
 git clone https://github.com/RobikRobi/School-diary.git
 cd School-diary
+```
 
-    Установите зависимости:
-
+Установите зависимости:
+```
 pip install --upgrade pip
 pip install -r requirements.txt
-
+```
 Создайте .env файл:
 
-"""
+```.env
 DB_URL=sqlite:///./mydatabase.db
 DB_URL_ASYNC=sqlite+aiosqlite:///./mydatabase.db
-"""
+```
 
 Запуск:
 
-"""
+```powershell
 uvicorn src.main:app --reload
-"""
+```
 
 Открой: http://localhost:8000
 🐳 Запуск в Docker
 
+```powershell
 docker build -t school-diary .
 docker run -d -p 8000:8000 --env-file .env school-diary
+```
 
 3. 🏗️ Architecture
 
